@@ -1,0 +1,304 @@
+﻿БЛОК 3
+Block_03_Matrices_And_Text
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[] a = new int[5];
+        double[,] b = new double[3, 4];
+        Random random = new Random();
+
+        for (int i = 0; i < a.Length; i++)
+        {
+            Console.Write("A[" + i + "] = ");
+            if (!int.TryParse(Console.ReadLine(), out a[i]))
+            {
+                Console.WriteLine("Wrong number.");
+                return;
+            }
+        }
+
+        for (int i = 0; i < b.GetLength(0); i++)
+            for (int j = 0; j < b.GetLength(1); j++)
+                b[i, j] = Math.Round(random.NextDouble() * 20 - 10, 2);
+
+        Console.WriteLine("Array A: " + string.Join(" ", a));
+        Console.WriteLine("Matrix B:");
+        for (int i = 0; i < b.GetLength(0); i++)
+        {
+            for (int j = 0; j < b.GetLength(1); j++)
+                Console.Write(b[i, j] + "\t");
+            Console.WriteLine();
+        }
+
+        double min = a[0];
+        double max = a[0];
+        double sum = 0;
+        double product = 1;
+
+        foreach (int value in a)
+        {
+            if (value < min) min = value;
+            if (value > max) max = value;
+            sum += value;
+            product *= value;
+        }
+
+        for (int i = 0; i < b.GetLength(0); i++)
+        {
+            for (int j = 0; j < b.GetLength(1); j++)
+            {
+                if (b[i, j] < min) min = b[i, j];
+                if (b[i, j] > max) max = b[i, j];
+                sum += b[i, j];
+                product *= b[i, j];
+            }
+        }
+
+        int evenSumA = 0;
+        foreach (int value in a)
+            if (value % 2 == 0) evenSumA += value;
+
+        double oddColumnsSumB = 0;
+        // Odd column numbers are 1 and 3, so indexes are 0 and 2.
+        for (int i = 0; i < b.GetLength(0); i++)
+            for (int j = 0; j < b.GetLength(1); j++)
+                if (j % 2 == 0) oddColumnsSumB += b[i, j];
+
+        Console.WriteLine("Common minimum: " + min);
+        Console.WriteLine("Common maximum: " + max);
+        Console.WriteLine("Total sum: " + sum);
+        Console.WriteLine("Total product: " + product);
+        Console.WriteLine("Sum of even elements in A: " + evenSumA);
+        Console.WriteLine("Sum of odd columns in B: " + oddColumnsSumB);
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[,] numbers = new int[5, 5];
+        Random random = new Random();
+        int min = int.MaxValue;
+        int max = int.MinValue;
+        int minIndex = 0;
+        int maxIndex = 0;
+
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                numbers[i, j] = random.Next(-100, 101);
+                Console.Write(numbers[i, j].ToString().PadLeft(5));
+                int index = i * 5 + j;
+                if (numbers[i, j] < min) { min = numbers[i, j]; minIndex = index; }
+                if (numbers[i, j] > max) { max = numbers[i, j]; maxIndex = index; }
+            }
+            Console.WriteLine();
+        }
+
+        int start = Math.Min(minIndex, maxIndex);
+        int end = Math.Max(minIndex, maxIndex);
+        int sum = 0;
+
+        for (int index = start + 1; index < end; index++)
+        {
+            int row = index / 5;
+            int column = index % 5;
+            sum += numbers[row, column];
+        }
+
+        Console.WriteLine("Min: " + min + ", max: " + max);
+        Console.WriteLine("Sum of elements between them: " + sum);
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static string EncryptOrDecrypt(string text, int shift)
+    {
+        char[] result = text.ToCharArray();
+        shift = ((shift % 26) + 26) % 26;
+
+        for (int i = 0; i < result.Length; i++)
+        {
+            char c = result[i];
+            if (c >= 'a' && c <= 'z')
+                result[i] = (char)('a' + (c - 'a' + shift) % 26);
+            else if (c >= 'A' && c <= 'Z')
+                result[i] = (char)('A' + (c - 'A' + shift) % 26);
+        }
+
+        return new string(result);
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter text in English: ");
+        string text = Console.ReadLine() ?? "";
+        Console.Write("Enter shift number: ");
+        if (!int.TryParse(Console.ReadLine(), out int shift)) return;
+
+        string encrypted = EncryptOrDecrypt(text, shift);
+        string decrypted = EncryptOrDecrypt(encrypted, -shift);
+
+        Console.WriteLine("Encrypted: " + encrypted);
+        Console.WriteLine("Decrypted: " + decrypted);
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static int[,] ReadMatrix(int rows, int columns)
+    {
+        int[,] matrix = new int[rows, columns];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < columns; j++)
+            {
+                Console.Write("Element [" + i + "," + j + "]: ");
+                if (!int.TryParse(Console.ReadLine(), out matrix[i, j]))
+                    throw new Exception("Wrong matrix value.");
+            }
+        return matrix;
+    }
+
+    static void Show(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+                Console.Write(matrix[i, j] + "\t");
+            Console.WriteLine();
+        }
+    }
+
+    static void Main()
+    {
+        try
+        {
+            Console.Write("Rows of first matrix: ");
+            int r1 = int.Parse(Console.ReadLine()!);
+            Console.Write("Columns of first matrix: ");
+            int c1 = int.Parse(Console.ReadLine()!);
+            Console.WriteLine("Enter first matrix:");
+            int[,] a = ReadMatrix(r1, c1);
+
+            Console.Write("Rows of second matrix: ");
+            int r2 = int.Parse(Console.ReadLine()!);
+            Console.Write("Columns of second matrix: ");
+            int c2 = int.Parse(Console.ReadLine()!);
+            Console.WriteLine("Enter second matrix:");
+            int[,] b = ReadMatrix(r2, c2);
+
+            Console.Write("Enter number for multiplication: ");
+            int number = int.Parse(Console.ReadLine()!);
+            int[,] scalar = new int[r1, c1];
+            for (int i = 0; i < r1; i++)
+                for (int j = 0; j < c1; j++)
+                    scalar[i, j] = a[i, j] * number;
+
+            Console.WriteLine("First matrix multiplied by number:");
+            Show(scalar);
+
+            if (r1 == r2 && c1 == c2)
+            {
+                int[,] sum = new int[r1, c1];
+                for (int i = 0; i < r1; i++)
+                    for (int j = 0; j < c1; j++)
+                        sum[i, j] = a[i, j] + b[i, j];
+                Console.WriteLine("Matrix sum:");
+                Show(sum);
+            }
+            else
+                Console.WriteLine("Matrix sum is not possible: sizes are different.");
+
+            if (c1 == r2)
+            {
+                int[,] product = new int[r1, c2];
+                for (int i = 0; i < r1; i++)
+                    for (int j = 0; j < c2; j++)
+                        for (int k = 0; k < c1; k++)
+                            product[i, j] += a[i, k] * b[k, j];
+                Console.WriteLine("Matrix product:");
+                Show(product);
+            }
+            else
+                Console.WriteLine("Matrix product is not possible: columns of first must equal rows of second.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static int Calculate(string expression)
+    {
+        expression = expression.Replace(" ", "");
+        int result = 0;
+        int sign = 1;
+        int i = 0;
+
+        while (i < expression.Length)
+        {
+            if (expression[i] == '+') { sign = 1; i++; continue; }
+            if (expression[i] == '-') { sign = -1; i++; continue; }
+
+            int number = 0;
+            bool hasDigit = false;
+            while (i < expression.Length && char.IsDigit(expression[i]))
+            {
+                number = number * 10 + (expression[i] - '0');
+                i++;
+                hasDigit = true;
+            }
+
+            if (!hasDigit)
+                throw new FormatException("Use only numbers, + and -.");
+
+            result += sign * number;
+            sign = 1;
+        }
+
+        return result;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter expression (only + and -): ");
+        string expression = Console.ReadLine() ?? "";
+        try
+        {
+            Console.WriteLine("Result: " + Calculate(expression));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+}
