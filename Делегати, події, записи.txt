@@ -1,0 +1,194 @@
+﻿БЛОК 9
+Block_09_Delegates_Events
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+delegate void MessageHandler(string message);
+
+class Program
+{
+    static void ShowMessage(string message) { Console.WriteLine(message); }
+    static void ShowUpper(string message) { Console.WriteLine(message.ToUpper()); }
+    static void ShowWithLines(string message) { Console.WriteLine("--- " + message + " ---"); }
+
+    static void Main()
+    {
+        MessageHandler handler = ShowMessage;
+        handler("Hello!");
+        handler = ShowUpper;
+        handler("Hello!");
+        handler = ShowWithLines;
+        handler("Hello!");
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+delegate double MathOperation(double a, double b);
+
+class Program
+{
+    static double Add(double a, double b) { return a + b; }
+    static double Subtract(double a, double b) { return a - b; }
+    static double Multiply(double a, double b) { return a * b; }
+
+    static void Main()
+    {
+        Console.Write("First number: ");
+        if (!double.TryParse(Console.ReadLine(), out double a)) return;
+        Console.Write("Second number: ");
+        if (!double.TryParse(Console.ReadLine(), out double b)) return;
+
+        MathOperation operation = Add;
+        Console.WriteLine("Sum: " + operation(a, b));
+        operation = Subtract;
+        Console.WriteLine("Difference: " + operation(a, b));
+        operation = Multiply;
+        Console.WriteLine("Product: " + operation(a, b));
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static bool IsEven(int number) { return number % 2 == 0; }
+    static bool IsOdd(int number) { return number % 2 != 0; }
+
+    static bool IsPrime(int number)
+    {
+        if (number < 2) return false;
+        for (int i = 2; i <= Math.Sqrt(number); i++)
+            if (number % i == 0) return false;
+        return true;
+    }
+
+    static bool IsFibonacci(int number)
+    {
+        if (number < 0) return false;
+        long a = 0, b = 1;
+        while (a < number)
+        {
+            long temp = a + b;
+            a = b;
+            b = temp;
+        }
+        return a == number;
+    }
+
+    static void Check(int number, Predicate<int> test, string title)
+    {
+        Console.WriteLine(title + ": " + test(number));
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter number: ");
+        if (!int.TryParse(Console.ReadLine(), out int number)) return;
+
+        Check(number, IsEven, "Even");
+        Check(number, IsOdd, "Odd");
+        Check(number, IsPrime, "Prime");
+        Check(number, IsFibonacci, "Fibonacci");
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+delegate double MathOperation(double a, double b);
+
+class Program
+{
+    static double Add(double a, double b) { return a + b; }
+    static double Subtract(double a, double b) { return a - b; }
+    static double Multiply(double a, double b) { return a * b; }
+
+    static void Main()
+    {
+        Console.Write("First number: ");
+        if (!double.TryParse(Console.ReadLine(), out double a)) return;
+        Console.Write("Second number: ");
+        if (!double.TryParse(Console.ReadLine(), out double b)) return;
+
+        MathOperation operation = Add;
+        Console.WriteLine("Sum: " + operation.Invoke(a, b));
+        operation = Subtract;
+        Console.WriteLine("Difference: " + operation.Invoke(a, b));
+        operation = Multiply;
+        Console.WriteLine("Product: " + operation.Invoke(a, b));
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
+delegate void DataChangedHandler(string message);
+
+class DataManager
+{
+    private List<string> data = new List<string>();
+    public event DataChangedHandler DataChanged;
+
+    public void Add(string value)
+    {
+        data.Add(value);
+        DataChanged?.Invoke("Added: " + value);
+    }
+
+    public void Delete(string value)
+    {
+        if (data.Remove(value))
+            DataChanged?.Invoke("Deleted: " + value);
+        else
+            Console.WriteLine("Value not found.");
+    }
+
+    public void Change(int index, string newValue)
+    {
+        if (index < 0 || index >= data.Count)
+        {
+            Console.WriteLine("Wrong index.");
+            return;
+        }
+
+        string oldValue = data[index];
+        data[index] = newValue;
+        DataChanged?.Invoke("Changed: " + oldValue + " -> " + newValue);
+    }
+
+    public void Show()
+    {
+        Console.WriteLine("Data: " + string.Join(", ", data));
+    }
+}
+
+class Program
+{
+    static void WriteLog(string message)
+    {
+        Console.WriteLine("LOG: " + message);
+    }
+
+    static void Main()
+    {
+        DataManager manager = new DataManager();
+        manager.DataChanged += WriteLog;
+
+        manager.Add("Apple");
+        manager.Add("Orange");
+        manager.Change(0, "Banana");
+        manager.Delete("Orange");
+        manager.Show();
+    }
+}
