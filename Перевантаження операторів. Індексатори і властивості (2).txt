@@ -1,0 +1,327 @@
+﻿БЛОК 6
+Block_06_Operators_2
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Employee
+{
+    public string FullName { get; set; }
+    public string BirthDate { get; set; }
+    public string Phone { get; set; }
+    public string Email { get; set; }
+    public string Position { get; set; }
+    public string Duties { get; set; }
+    private decimal salary;
+    public decimal Salary
+    {
+        get { return salary; }
+        set { salary = Math.Max(0, value); }
+    }
+
+    public Employee(string fullName, decimal salary)
+    {
+        FullName = fullName;
+        BirthDate = "Not set";
+        Phone = "Not set";
+        Email = "Not set";
+        Position = "Not set";
+        Duties = "Not set";
+        Salary = salary;
+    }
+
+    private Employee WithSalary(decimal value)
+    {
+        Employee copy = new Employee(FullName, value);
+        copy.BirthDate = BirthDate;
+        copy.Phone = Phone;
+        copy.Email = Email;
+        copy.Position = Position;
+        copy.Duties = Duties;
+        return copy;
+    }
+
+    public static Employee operator +(Employee employee, decimal value)
+        => employee.WithSalary(employee.Salary + value);
+    public static Employee operator -(Employee employee, decimal value)
+        => employee.WithSalary(Math.Max(0, employee.Salary - value));
+
+    public static bool operator ==(Employee a, Employee b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.Salary == b.Salary);
+    public static bool operator !=(Employee a, Employee b) => !(a == b);
+    public static bool operator <(Employee a, Employee b) => a.Salary < b.Salary;
+    public static bool operator >(Employee a, Employee b) => a.Salary > b.Salary;
+    public override bool Equals(object obj) => obj is Employee other && this == other;
+    public override int GetHashCode() => Salary.GetHashCode();
+}
+
+class Program
+{
+    static void Main()
+    {
+        Employee first = new Employee("Ann", 20000);
+        Employee second = first + 5000;
+        Console.WriteLine(first.FullName + ": " + first.Salary);
+        Console.WriteLine(second.FullName + ": " + second.Salary);
+        Console.WriteLine("Second salary is bigger: " + (second > first));
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Matrix
+{
+    private int[,] data;
+    public int Rows { get { return data.GetLength(0); } }
+    public int Columns { get { return data.GetLength(1); } }
+
+    public Matrix(int rows, int columns)
+    {
+        data = new int[rows, columns];
+    }
+
+    public Matrix(int[,] values)
+    {
+        data = (int[,])values.Clone();
+    }
+
+    public int this[int row, int column]
+    {
+        get { return data[row, column]; }
+        set { data[row, column] = value; }
+    }
+
+    public static Matrix operator +(Matrix a, Matrix b)
+    {
+        CheckSameSize(a, b);
+        Matrix result = new Matrix(a.Rows, a.Columns);
+        for (int i = 0; i < a.Rows; i++)
+            for (int j = 0; j < a.Columns; j++) result[i, j] = a[i, j] + b[i, j];
+        return result;
+    }
+
+    public static Matrix operator -(Matrix a, Matrix b)
+    {
+        CheckSameSize(a, b);
+        Matrix result = new Matrix(a.Rows, a.Columns);
+        for (int i = 0; i < a.Rows; i++)
+            for (int j = 0; j < a.Columns; j++) result[i, j] = a[i, j] - b[i, j];
+        return result;
+    }
+
+    public static Matrix operator *(Matrix a, Matrix b)
+    {
+        if (a.Columns != b.Rows) throw new ArgumentException("Wrong matrix sizes for multiplication.");
+        Matrix result = new Matrix(a.Rows, b.Columns);
+        for (int i = 0; i < a.Rows; i++)
+            for (int j = 0; j < b.Columns; j++)
+                for (int k = 0; k < a.Columns; k++) result[i, j] += a[i, k] * b[k, j];
+        return result;
+    }
+
+    public static Matrix operator *(Matrix matrix, int number)
+    {
+        Matrix result = new Matrix(matrix.Rows, matrix.Columns);
+        for (int i = 0; i < matrix.Rows; i++)
+            for (int j = 0; j < matrix.Columns; j++) result[i, j] = matrix[i, j] * number;
+        return result;
+    }
+
+    public static bool operator ==(Matrix a, Matrix b)
+    {
+        if (ReferenceEquals(a, b)) return true;
+        if (a is null || b is null || a.Rows != b.Rows || a.Columns != b.Columns) return false;
+        for (int i = 0; i < a.Rows; i++)
+            for (int j = 0; j < a.Columns; j++) if (a[i, j] != b[i, j]) return false;
+        return true;
+    }
+
+    public static bool operator !=(Matrix a, Matrix b) => !(a == b);
+    public override bool Equals(object obj) => obj is Matrix other && this == other;
+    public override int GetHashCode()
+    {
+        int hash = HashCode.Combine(Rows, Columns);
+        foreach (int value in data) hash = HashCode.Combine(hash, value);
+        return hash;
+    }
+
+    public void Show()
+    {
+        for (int i = 0; i < Rows; i++)
+        {
+            for (int j = 0; j < Columns; j++) Console.Write(data[i, j] + "\t");
+            Console.WriteLine();
+        }
+    }
+
+    private static void CheckSameSize(Matrix a, Matrix b)
+    {
+        if (a.Rows != b.Rows || a.Columns != b.Columns)
+            throw new ArgumentException("Matrix sizes must be same.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Matrix a = new Matrix(new int[,] { { 1, 2 }, { 3, 4 } });
+        Matrix b = new Matrix(new int[,] { { 5, 6 }, { 7, 8 } });
+        Console.WriteLine("Sum:"); (a + b).Show();
+        Console.WriteLine("Difference:"); (a - b).Show();
+        Console.WriteLine("Product:"); (a * b).Show();
+        Console.WriteLine("Times 3:"); (a * 3).Show();
+        Console.WriteLine("A equals B: " + (a == b));
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class City
+{
+    public string Name { get; set; }
+    public string Country { get; set; }
+    public string PhoneCode { get; set; }
+    public string[] Districts { get; set; }
+    private int population;
+    public int Population
+    {
+        get { return population; }
+        set { population = Math.Max(0, value); }
+    }
+
+    public City(string name, int population)
+    {
+        Name = name;
+        Country = "Not set";
+        PhoneCode = "Not set";
+        Districts = new string[0];
+        Population = population;
+    }
+
+    public static City operator +(City city, int value)
+        => new City(city.Name, city.Population + value)
+        { Country = city.Country, PhoneCode = city.PhoneCode, Districts = city.Districts };
+    public static City operator -(City city, int value)
+        => new City(city.Name, Math.Max(0, city.Population - value))
+        { Country = city.Country, PhoneCode = city.PhoneCode, Districts = city.Districts };
+    public static bool operator ==(City a, City b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.Population == b.Population);
+    public static bool operator !=(City a, City b) => !(a == b);
+    public static bool operator <(City a, City b) => a.Population < b.Population;
+    public static bool operator >(City a, City b) => a.Population > b.Population;
+    public override bool Equals(object obj) => obj is City other && this == other;
+    public override int GetHashCode() => Population.GetHashCode();
+}
+
+class Program
+{
+    static void Main()
+    {
+        City first = new City("Kyiv", 3000000);
+        City second = first + 100000;
+        Console.WriteLine(first.Name + ": " + first.Population);
+        Console.WriteLine(second.Name + ": " + second.Population);
+        Console.WriteLine("Second has more people: " + (second > first));
+        Console.WriteLine("Same population: " + first.Equals(second));
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+class CreditCard
+{
+    public string Owner { get; set; }
+    public string CardNumber { get; set; }
+    public string ExpirationDate { get; set; }
+    public string CVC { get; set; }
+    private decimal balance;
+    public decimal Balance
+    {
+        get { return balance; }
+        set { balance = Math.Max(0, value); }
+    }
+
+    public CreditCard(string owner, string cvc, decimal balance)
+    {
+        Owner = owner;
+        CardNumber = "0000 0000 0000 0000";
+        ExpirationDate = "01/30";
+        CVC = cvc;
+        Balance = balance;
+    }
+
+    public static CreditCard operator +(CreditCard card, decimal amount)
+        => new CreditCard(card.Owner, card.CVC, card.Balance + amount)
+        { CardNumber = card.CardNumber, ExpirationDate = card.ExpirationDate };
+    public static CreditCard operator -(CreditCard card, decimal amount)
+        => new CreditCard(card.Owner, card.CVC, Math.Max(0, card.Balance - amount))
+        { CardNumber = card.CardNumber, ExpirationDate = card.ExpirationDate };
+
+    public static bool operator ==(CreditCard a, CreditCard b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.CVC == b.CVC);
+    public static bool operator !=(CreditCard a, CreditCard b) => !(a == b);
+    public static bool operator <(CreditCard a, CreditCard b) => a.Balance < b.Balance;
+    public static bool operator >(CreditCard a, CreditCard b) => a.Balance > b.Balance;
+    public override bool Equals(object obj) => obj is CreditCard other && this == other;
+    public override int GetHashCode() => CVC.GetHashCode();
+}
+
+class Program
+{
+    static void Main()
+    {
+        CreditCard card = new CreditCard("Alex", "123", 1000);
+        card = card + 250;
+        Console.WriteLine(card.Owner + " balance: " + card.Balance);
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+
+class Player
+{
+    public string Name { get; set; }
+    private int score;
+    public int Score
+    {
+        get { return score; }
+        set
+        {
+            score = Math.Max(0, value);
+            Level = score / 100 + 1;
+        }
+    }
+    public int Level { get; private set; }
+
+    public Player(string name)
+    {
+        Name = name;
+        Score = 0;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Player player = new Player("Player1");
+        Console.Write("Enter score: ");
+        if (int.TryParse(Console.ReadLine(), out int score))
+            player.Score = score;
+
+        Console.WriteLine("Name: " + player.Name);
+        Console.WriteLine("Score: " + player.Score);
+        Console.WriteLine("Level: " + player.Level);
+    }
+}
