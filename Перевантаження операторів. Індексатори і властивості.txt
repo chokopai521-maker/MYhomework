@@ -1,0 +1,213 @@
+﻿БЛОК 5
+Block_05_Operators_1
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Magazine
+{
+    public string Name { get; set; }
+    public int EmployeeCount { get; set; }
+
+    public Magazine(string name, int employeeCount)
+    {
+        Name = name;
+        EmployeeCount = Math.Max(0, employeeCount);
+    }
+
+    public static Magazine operator +(Magazine magazine, int value)
+        => new Magazine(magazine.Name, magazine.EmployeeCount + value);
+
+    public static Magazine operator -(Magazine magazine, int value)
+        => new Magazine(magazine.Name, Math.Max(0, magazine.EmployeeCount - value));
+
+    public static bool operator ==(Magazine a, Magazine b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.EmployeeCount == b.EmployeeCount);
+
+    public static bool operator !=(Magazine a, Magazine b) => !(a == b);
+    public static bool operator <(Magazine a, Magazine b) => a.EmployeeCount < b.EmployeeCount;
+    public static bool operator >(Magazine a, Magazine b) => a.EmployeeCount > b.EmployeeCount;
+
+    public override bool Equals(object obj) => obj is Magazine other && this == other;
+    public override int GetHashCode() => EmployeeCount.GetHashCode();
+}
+
+class Program
+{
+    static void Main()
+    {
+        Magazine first = new Magazine("News", 10);
+        Magazine second = first + 5;
+        Console.WriteLine(first.Name + ": " + first.EmployeeCount);
+        Console.WriteLine(second.Name + ": " + second.EmployeeCount);
+        Console.WriteLine("Same count: " + (first == second));
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Store
+{
+    public string Name { get; set; }
+    public double Area { get; set; }
+
+    public Store(string name, double area)
+    {
+        Name = name;
+        Area = Math.Max(0, area);
+    }
+
+    public static Store operator +(Store store, double value)
+        => new Store(store.Name, store.Area + value);
+
+    public static Store operator -(Store store, double value)
+        => new Store(store.Name, Math.Max(0, store.Area - value));
+
+    public static bool operator ==(Store a, Store b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.Area == b.Area);
+
+    public static bool operator !=(Store a, Store b) => !(a == b);
+    public static bool operator <(Store a, Store b) => a.Area < b.Area;
+    public static bool operator >(Store a, Store b) => a.Area > b.Area;
+    public override bool Equals(object obj) => obj is Store other && this == other;
+    public override int GetHashCode() => Area.GetHashCode();
+}
+
+class Program
+{
+    static void Main()
+    {
+        Store first = new Store("Small shop", 50);
+        Store second = first + 20;
+        Console.WriteLine(first.Name + ": " + first.Area);
+        Console.WriteLine(second.Name + ": " + second.Area);
+        Console.WriteLine("Second is bigger: " + (second > first));
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Fraction
+{
+    public int Numerator { get; set; }
+    private int denominator;
+    public int Denominator
+    {
+        get { return denominator; }
+        set
+        {
+            if (value == 0) throw new ArgumentException("Denominator cannot be zero.");
+            denominator = value;
+        }
+    }
+
+    public Fraction(int numerator, int denominator)
+    {
+        Numerator = numerator;
+        Denominator = denominator;
+        Reduce();
+    }
+
+    public void Reduce()
+    {
+        if (Denominator < 0)
+        {
+            Numerator = -Numerator;
+            Denominator = -Denominator;
+        }
+        int a = Math.Abs(Numerator);
+        int b = Denominator;
+        while (b != 0)
+        {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        int gcd = a == 0 ? 1 : a;
+        Numerator /= gcd;
+        Denominator /= gcd;
+    }
+
+    public static Fraction operator +(Fraction a, Fraction b)
+        => new Fraction(a.Numerator * b.Denominator + b.Numerator * a.Denominator, a.Denominator * b.Denominator);
+    public static Fraction operator -(Fraction a, Fraction b)
+        => new Fraction(a.Numerator * b.Denominator - b.Numerator * a.Denominator, a.Denominator * b.Denominator);
+    public static Fraction operator *(Fraction a, Fraction b)
+        => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+    public static Fraction operator /(Fraction a, Fraction b)
+    {
+        if (b.Numerator == 0) throw new DivideByZeroException();
+        return new Fraction(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
+    }
+
+    public static bool operator ==(Fraction a, Fraction b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.Numerator == b.Numerator && a.Denominator == b.Denominator);
+    public static bool operator !=(Fraction a, Fraction b) => !(a == b);
+    public override bool Equals(object obj) => obj is Fraction other && this == other;
+    public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
+    public override string ToString() => Numerator + "/" + Denominator;
+}
+
+class Program
+{
+    static void Main()
+    {
+        Fraction a = new Fraction(1, 2);
+        Fraction b = new Fraction(1, 3);
+        Console.WriteLine("Sum: " + (a + b));
+        Console.WriteLine("Difference: " + (a - b));
+        Console.WriteLine("Product: " + (a * b));
+        Console.WriteLine("Division: " + (a / b));
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+class Product
+{
+    public string Name { get; set; }
+    private int quantity;
+    public int Quantity
+    {
+        get { return quantity; }
+        set { quantity = Math.Max(0, value); }
+    }
+    public decimal Price { get; set; }
+
+    public Product(string name, int quantity, decimal price)
+    {
+        Name = name;
+        Quantity = quantity;
+        Price = Math.Max(0, price);
+    }
+
+    public static Product operator +(Product product, int value)
+        => new Product(product.Name, product.Quantity + value, product.Price);
+    public static Product operator -(Product product, int value)
+        => new Product(product.Name, Math.Max(0, product.Quantity - value), product.Price);
+    public static bool operator ==(Product a, Product b)
+        => ReferenceEquals(a, b) || (a is not null && b is not null && a.Price == b.Price);
+    public static bool operator !=(Product a, Product b) => !(a == b);
+    public static bool operator >(Product a, Product b) => a.Quantity > b.Quantity;
+    public static bool operator <(Product a, Product b) => a.Quantity < b.Quantity;
+    public override bool Equals(object obj) => obj is Product other && this == other;
+    public override int GetHashCode() => Price.GetHashCode();
+}
+
+class Program
+{
+    static void Main()
+    {
+        Product product = new Product("Milk", 10, 35.5m);
+        product = product + 5;
+        Console.WriteLine(product.Name + ", quantity: " + product.Quantity + ", price: " + product.Price);
+    }
+}
