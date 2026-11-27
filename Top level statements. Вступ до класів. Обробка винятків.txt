@@ -1,0 +1,458 @@
+﻿БЛОК 4
+Block_04_Methods_And_Classes
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static long ProductInRange(int first, int second)
+    {
+        if (first > second)
+        {
+            int temp = first;
+            first = second;
+            second = temp;
+        }
+
+        long product = 1;
+        for (int i = first; i <= second; i++)
+            product *= i;
+        return product;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter first border: ");
+        if (!int.TryParse(Console.ReadLine(), out int first)) return;
+        Console.Write("Enter second border: ");
+        if (!int.TryParse(Console.ReadLine(), out int second)) return;
+
+        Console.WriteLine("Product: " + ProductInRange(first, second));
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static bool IsFibonacci(int number)
+    {
+        if (number < 0) return false;
+        long a = 0;
+        long b = 1;
+        while (a < number)
+        {
+            long temp = a + b;
+            a = b;
+            b = temp;
+        }
+        return a == number;
+    }
+
+    static bool IsPrime(int number)
+    {
+        if (number < 2) return false;
+        for (int i = 2; i <= Math.Sqrt(number); i++)
+            if (number % i == 0) return false;
+        return true;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter number: ");
+        if (!int.TryParse(Console.ReadLine(), out int number)) return;
+
+        Console.WriteLine("Is Fibonacci number: " + IsFibonacci(number));
+        Console.WriteLine("Is prime number: " + IsPrime(number));
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Sort(int[] numbers, bool ascending)
+    {
+        for (int i = 0; i < numbers.Length - 1; i++)
+        {
+            for (int j = 0; j < numbers.Length - 1 - i; j++)
+            {
+                bool needSwap = ascending
+                    ? numbers[j] > numbers[j + 1]
+                    : numbers[j] < numbers[j + 1];
+
+                if (needSwap)
+                {
+                    int temp = numbers[j];
+                    numbers[j] = numbers[j + 1];
+                    numbers[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    static void Main()
+    {
+        Console.Write("How many numbers? ");
+        if (!int.TryParse(Console.ReadLine(), out int size) || size <= 0) return;
+
+        int[] numbers = new int[size];
+        for (int i = 0; i < size; i++)
+        {
+            Console.Write("Number " + (i + 1) + ": ");
+            if (!int.TryParse(Console.ReadLine(), out numbers[i])) return;
+        }
+
+        Console.Write("1 - ascending, 2 - descending: ");
+        string choice = Console.ReadLine() ?? "";
+        if (choice != "1" && choice != "2") return;
+
+        Sort(numbers, choice == "1");
+        Console.WriteLine(string.Join(" ", numbers));
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+class City
+{
+    private string name;
+    private string country;
+    private int population;
+    private string phoneCode;
+    private string[] districts;
+
+    public void Input()
+    {
+        Console.Write("City name: "); name = Console.ReadLine() ?? "";
+        Console.Write("Country: "); country = Console.ReadLine() ?? "";
+        Console.Write("Population: "); int.TryParse(Console.ReadLine(), out population);
+        Console.Write("Phone code: "); phoneCode = Console.ReadLine() ?? "";
+        Console.Write("Districts separated by comma: ");
+        districts = (Console.ReadLine() ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    public void Show()
+    {
+        Console.WriteLine("City: " + name);
+        Console.WriteLine("Country: " + country);
+        Console.WriteLine("Population: " + population);
+        Console.WriteLine("Phone code: " + phoneCode);
+        Console.WriteLine("Districts: " + string.Join(", ", districts));
+    }
+
+    public string GetName() { return name; }
+    public void SetName(string value) { name = value; }
+    public string GetCountry() { return country; }
+    public void SetCountry(string value) { country = value; }
+    public int GetPopulation() { return population; }
+    public void SetPopulation(int value) { if (value >= 0) population = value; }
+    public string GetPhoneCode() { return phoneCode; }
+    public void SetPhoneCode(string value) { phoneCode = value; }
+    public string[] GetDistricts() { return (string[])districts.Clone(); }
+    public void SetDistricts(string[] value) { districts = (string[])value.Clone(); }
+}
+
+class Program
+{
+    static void Main()
+    {
+        City city = new City();
+        city.Input();
+        city.Show();
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+
+class Employee
+{
+    private string fullName;
+    private string birthDate;
+    private string phone;
+    private string email;
+    private string position;
+    private string duties;
+
+    public void Input()
+    {
+        Console.Write("Full name: "); fullName = Console.ReadLine() ?? "";
+        Console.Write("Birth date: "); birthDate = Console.ReadLine() ?? "";
+        Console.Write("Phone: "); phone = Console.ReadLine() ?? "";
+        Console.Write("Work email: "); email = Console.ReadLine() ?? "";
+        Console.Write("Position: "); position = Console.ReadLine() ?? "";
+        Console.Write("Job duties: "); duties = Console.ReadLine() ?? "";
+    }
+
+    public void Show()
+    {
+        Console.WriteLine("Name: " + fullName);
+        Console.WriteLine("Birth date: " + birthDate);
+        Console.WriteLine("Phone: " + phone);
+        Console.WriteLine("Email: " + email);
+        Console.WriteLine("Position: " + position);
+        Console.WriteLine("Duties: " + duties);
+    }
+
+    public string GetFullName() { return fullName; }
+    public void SetFullName(string value) { fullName = value; }
+    public string GetBirthDate() { return birthDate; }
+    public void SetBirthDate(string value) { birthDate = value; }
+    public string GetPhone() { return phone; }
+    public void SetPhone(string value) { phone = value; }
+    public string GetEmail() { return email; }
+    public void SetEmail(string value) { email = value; }
+    public string GetPosition() { return position; }
+    public void SetPosition(string value) { position = value; }
+    public string GetDuties() { return duties; }
+    public void SetDuties(string value) { duties = value; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Employee employee = new Employee();
+        employee.Input();
+        employee.Show();
+    }
+}
+
+TZ6
+------------------------------------------------------------------------------
+using System;
+
+class Airplane
+{
+    private string name;
+    private string manufacturer;
+    private int year;
+    private string type;
+
+    public Airplane()
+    {
+        name = "Unknown";
+        manufacturer = "Unknown";
+        year = 0;
+        type = "Unknown";
+    }
+
+    public Airplane(string name, string manufacturer, int year, string type)
+    {
+        this.name = name;
+        this.manufacturer = manufacturer;
+        this.year = year;
+        this.type = type;
+    }
+
+    public void Input()
+    {
+        Console.Write("Name: "); name = Console.ReadLine() ?? "";
+        Console.Write("Manufacturer: "); manufacturer = Console.ReadLine() ?? "";
+        Console.Write("Year: "); int.TryParse(Console.ReadLine(), out year);
+        Console.Write("Type: "); type = Console.ReadLine() ?? "";
+    }
+
+    public void Input(string name, string manufacturer, int year, string type)
+    {
+        this.name = name;
+        this.manufacturer = manufacturer;
+        this.year = year;
+        this.type = type;
+    }
+
+    public void Show()
+    {
+        Console.WriteLine(name + ", " + manufacturer + ", " + year + ", " + type);
+    }
+
+    public void Show(bool shortInfo)
+    {
+        if (shortInfo) Console.WriteLine(name + " (" + year + ")");
+        else Show();
+    }
+
+    public string GetName() { return name; }
+    public void SetName(string value) { name = value; }
+    public string GetManufacturer() { return manufacturer; }
+    public void SetManufacturer(string value) { manufacturer = value; }
+    public int GetYear() { return year; }
+    public void SetYear(int value) { year = value; }
+    public string GetType() { return type; }
+    public void SetType(string value) { type = value; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Airplane airplane = new Airplane();
+        airplane.Input();
+        airplane.Show();
+        Console.WriteLine("Short info:");
+        airplane.Show(true);
+    }
+}
+
+TZ7
+------------------------------------------------------------------------------
+using System;
+
+class Matrix
+{
+    private int[,] data;
+
+    public Matrix(int rows, int columns)
+    {
+        data = new int[rows, columns];
+    }
+
+    public Matrix(int[,] values)
+    {
+        data = (int[,])values.Clone();
+    }
+
+    public void Input()
+    {
+        for (int i = 0; i < data.GetLength(0); i++)
+            for (int j = 0; j < data.GetLength(1); j++)
+            {
+                Console.Write("[" + i + "," + j + "]: ");
+                int.TryParse(Console.ReadLine(), out data[i, j]);
+            }
+    }
+
+    public void Input(int[,] values)
+    {
+        if (values.GetLength(0) != data.GetLength(0) || values.GetLength(1) != data.GetLength(1))
+            throw new ArgumentException("Matrix sizes are different.");
+        data = (int[,])values.Clone();
+    }
+
+    public void Show()
+    {
+        for (int i = 0; i < data.GetLength(0); i++)
+        {
+            for (int j = 0; j < data.GetLength(1); j++)
+                Console.Write(data[i, j] + "\t");
+            Console.WriteLine();
+        }
+    }
+
+    public int GetMax()
+    {
+        int max = data[0, 0];
+        foreach (int value in data) if (value > max) max = value;
+        return max;
+    }
+
+    public int GetMin()
+    {
+        int min = data[0, 0];
+        foreach (int value in data) if (value < min) min = value;
+        return min;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Matrix matrix = new Matrix(2, 3);
+        matrix.Input();
+        matrix.Show();
+        Console.WriteLine("Max: " + matrix.GetMax());
+        Console.WriteLine("Min: " + matrix.GetMin());
+    }
+}
+
+TZ8
+------------------------------------------------------------------------------
+using System;
+
+class Vector
+{
+    public static int[] Add(int[] a, int[] b)
+    {
+        int[] result = new int[Math.Max(a.Length, b.Length)];
+        for (int i = 0; i < result.Length; i++)
+            result[i] = (i < a.Length ? a[i] : 0) + (i < b.Length ? b[i] : 0);
+        return result;
+    }
+
+    public static int[] Subtract(int[] a, int[] b)
+    {
+        int[] result = new int[Math.Max(a.Length, b.Length)];
+        for (int i = 0; i < result.Length; i++)
+            result[i] = (i < a.Length ? a[i] : 0) - (i < b.Length ? b[i] : 0);
+        return result;
+    }
+
+    public static int Dot(int[] a, int[] b)
+    {
+        int result = 0;
+        for (int i = 0; i < Math.Min(a.Length, b.Length); i++) result += a[i] * b[i];
+        return result;
+    }
+
+    public static int[,] Add(int[,] a, int[,] b)
+    {
+        int rows = Math.Max(a.GetLength(0), b.GetLength(0));
+        int columns = Math.Max(a.GetLength(1), b.GetLength(1));
+        int[,] result = new int[rows, columns];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < columns; j++)
+                result[i, j] = (i < a.GetLength(0) && j < a.GetLength(1) ? a[i, j] : 0)
+                             + (i < b.GetLength(0) && j < b.GetLength(1) ? b[i, j] : 0);
+        return result;
+    }
+
+    public static int[,] Subtract(int[,] a, int[,] b)
+    {
+        int rows = Math.Max(a.GetLength(0), b.GetLength(0));
+        int columns = Math.Max(a.GetLength(1), b.GetLength(1));
+        int[,] result = new int[rows, columns];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < columns; j++)
+                result[i, j] = (i < a.GetLength(0) && j < a.GetLength(1) ? a[i, j] : 0)
+                             - (i < b.GetLength(0) && j < b.GetLength(1) ? b[i, j] : 0);
+        return result;
+    }
+
+    public static int Dot(int[,] a, int[,] b)
+    {
+        int rows = Math.Min(a.GetLength(0), b.GetLength(0));
+        int columns = Math.Min(a.GetLength(1), b.GetLength(1));
+        int result = 0;
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < columns; j++) result += a[i, j] * b[i, j];
+        return result;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        int[] first = { 1, 2, 3 };
+        int[] second = { 4, 5 };
+        Console.WriteLine("Vector sum: " + string.Join(" ", Vector.Add(first, second)));
+        Console.WriteLine("Vector difference: " + string.Join(" ", Vector.Subtract(first, second)));
+        Console.WriteLine("Vector dot product: " + Vector.Dot(first, second));
+
+        int[,] a = { { 1, 2 }, { 3, 4 } };
+        int[,] b = { { 5, 6 }, { 7, 8 } };
+        Console.WriteLine("Matrix dot product: " + Vector.Dot(a, b));
+    }
+}
