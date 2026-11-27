@@ -1,0 +1,262 @@
+﻿БЛОК 10
+Block_10_Generic_Collections
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Swap<T>(ref T first, ref T second)
+    {
+        T temp = first;
+        first = second;
+        second = temp;
+    }
+
+    static void Main()
+    {
+        int a = 10;
+        int b = 20;
+        Console.WriteLine("Before: " + a + " " + b);
+        Swap(ref a, ref b);
+        Console.WriteLine("After: " + a + " " + b);
+
+        string first = "Hello";
+        string second = "World";
+        Swap(ref first, ref second);
+        Console.WriteLine(first + " " + second);
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
+class MyPriorityQueue<T>
+{
+    private class Item
+    {
+        public T Value;
+        public int Priority;
+        public long Order;
+        public Item(T value, int priority, long order)
+        {
+            Value = value;
+            Priority = priority;
+            Order = order;
+        }
+    }
+
+    private List<Item> items = new List<Item>();
+    private long nextOrder = 0;
+    public int Count { get { return items.Count; } }
+    public bool IsEmpty { get { return items.Count == 0; } }
+
+    public void Enqueue(T value, int priority)
+    {
+        items.Add(new Item(value, priority, nextOrder++));
+    }
+
+    private int FindNext()
+    {
+        if (items.Count == 0) throw new InvalidOperationException("Queue is empty.");
+        int best = 0;
+        for (int i = 1; i < items.Count; i++)
+        {
+            if (items[i].Priority < items[best].Priority ||
+                (items[i].Priority == items[best].Priority && items[i].Order < items[best].Order))
+                best = i;
+        }
+        return best;
+    }
+
+    public T Peek() { return items[FindNext()].Value; }
+
+    public T Dequeue()
+    {
+        int index = FindNext();
+        T value = items[index].Value;
+        items.RemoveAt(index);
+        return value;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        MyPriorityQueue<string> queue = new MyPriorityQueue<string>();
+        queue.Enqueue("Normal task", 3);
+        queue.Enqueue("Important task", 1);
+        queue.Enqueue("Middle task", 2);
+
+        while (!queue.IsEmpty)
+            Console.WriteLine(queue.Dequeue());
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class CircularQueue<T>
+{
+    private T[] items;
+    private int head;
+    private int tail;
+    private int count;
+
+    public int Count { get { return count; } }
+    public bool IsEmpty { get { return count == 0; } }
+    public bool IsFull { get { return count == items.Length; } }
+
+    public CircularQueue(int capacity)
+    {
+        if (capacity <= 0) throw new ArgumentException("Capacity must be positive.");
+        items = new T[capacity];
+    }
+
+    public void Enqueue(T value)
+    {
+        if (IsFull) throw new InvalidOperationException("Queue is full.");
+        items[tail] = value;
+        tail = (tail + 1) % items.Length;
+        count++;
+    }
+
+    public T Dequeue()
+    {
+        if (IsEmpty) throw new InvalidOperationException("Queue is empty.");
+        T value = items[head];
+        items[head] = default(T);
+        head = (head + 1) % items.Length;
+        count--;
+        return value;
+    }
+
+    public T Peek()
+    {
+        if (IsEmpty) throw new InvalidOperationException("Queue is empty.");
+        return items[head];
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        CircularQueue<int> queue = new CircularQueue<int>(3);
+        queue.Enqueue(10);
+        queue.Enqueue(20);
+        Console.WriteLine("First: " + queue.Peek());
+        Console.WriteLine("Removed: " + queue.Dequeue());
+        queue.Enqueue(30);
+        queue.Enqueue(40);
+
+        while (!queue.IsEmpty)
+            Console.WriteLine(queue.Dequeue());
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+class SinglyLinkedList<T>
+{
+    private class Node
+    {
+        public T Value;
+        public Node Next;
+        public Node(T value) { Value = value; }
+    }
+
+    private Node head;
+    private Node tail;
+    public int Count { get; private set; }
+    public bool IsEmpty { get { return Count == 0; } }
+
+    public void AddLast(T value)
+    {
+        Node node = new Node(value);
+        if (head == null)
+            head = tail = node;
+        else
+        {
+            tail.Next = node;
+            tail = node;
+        }
+        Count++;
+    }
+
+    public void AddFirst(T value)
+    {
+        Node node = new Node(value);
+        node.Next = head;
+        head = node;
+        if (tail == null) tail = node;
+        Count++;
+    }
+
+    public bool Remove(T value)
+    {
+        Node current = head;
+        Node previous = null;
+
+        while (current != null)
+        {
+            if (Equals(current.Value, value))
+            {
+                if (previous == null) head = current.Next;
+                else previous.Next = current.Next;
+                if (current == tail) tail = previous;
+                Count--;
+                return true;
+            }
+            previous = current;
+            current = current.Next;
+        }
+        return false;
+    }
+
+    public bool Contains(T value)
+    {
+        Node current = head;
+        while (current != null)
+        {
+            if (Equals(current.Value, value)) return true;
+            current = current.Next;
+        }
+        return false;
+    }
+
+    public void Show()
+    {
+        Node current = head;
+        while (current != null)
+        {
+            Console.Write(current.Value + " ");
+            current = current.Next;
+        }
+        Console.WriteLine();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        SinglyLinkedList<int> list = new SinglyLinkedList<int>();
+        list.AddLast(10);
+        list.AddLast(20);
+        list.AddFirst(5);
+        list.Show();
+        Console.WriteLine("Contains 20: " + list.Contains(20));
+        list.Remove(10);
+        list.Show();
+        Console.WriteLine("Count: " + list.Count);
+    }
+}
