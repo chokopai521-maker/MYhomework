@@ -1,0 +1,183 @@
+﻿БЛОК 11
+Block_11_Generic_Tasks
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static T Maximum<T>(T a, T b, T c) where T : IComparable<T>
+    {
+        T max = a;
+        if (b.CompareTo(max) > 0) max = b;
+        if (c.CompareTo(max) > 0) max = c;
+        return max;
+    }
+
+    static void Main()
+    {
+        Console.WriteLine(Maximum(10, 25, 7));
+        Console.WriteLine(Maximum(2.5, 1.8, 3.7));
+        Console.WriteLine(Maximum("apple", "pear", "orange"));
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static T Minimum<T>(T a, T b, T c) where T : IComparable<T>
+    {
+        T min = a;
+        if (b.CompareTo(min) < 0) min = b;
+        if (c.CompareTo(min) < 0) min = c;
+        return min;
+    }
+
+    static void Main()
+    {
+        Console.WriteLine(Minimum(10, 25, 7));
+        Console.WriteLine(Minimum(2.5, 1.8, 3.7));
+        Console.WriteLine(Minimum("apple", "pear", "orange"));
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static T Sum<T>(T[] numbers)
+    {
+        dynamic result = 0;
+        foreach (T number in numbers)
+            result += (dynamic)number;
+        return (T)result;
+    }
+
+    static void Main()
+    {
+        int[] integers = { 1, 2, 3, 4 };
+        double[] doubles = { 1.5, 2.5, 3.0 };
+        Console.WriteLine("Integer sum: " + Sum(integers));
+        Console.WriteLine("Double sum: " + Sum(doubles));
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
+class MyStack<T>
+{
+    private List<T> items = new List<T>();
+    public int Count { get { return items.Count; } }
+
+    public void Push(T value) { items.Add(value); }
+
+    public T Pop()
+    {
+        if (items.Count == 0) throw new InvalidOperationException("Stack is empty.");
+        int last = items.Count - 1;
+        T value = items[last];
+        items.RemoveAt(last);
+        return value;
+    }
+
+    public T Peek()
+    {
+        if (items.Count == 0) throw new InvalidOperationException("Stack is empty.");
+        return items[items.Count - 1];
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        MyStack<string> stack = new MyStack<string>();
+        stack.Push("one");
+        stack.Push("two");
+        Console.WriteLine("Top: " + stack.Peek());
+        Console.WriteLine("Pop: " + stack.Pop());
+        Console.WriteLine("Count: " + stack.Count);
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
+class MyQueue<T>
+{
+    private Queue<T> items = new Queue<T>();
+    public int Count { get { return items.Count; } }
+
+    public void Enqueue(T value) { items.Enqueue(value); }
+
+    public T Dequeue()
+    {
+        if (items.Count == 0) throw new InvalidOperationException("Queue is empty.");
+        return items.Dequeue();
+    }
+
+    public T Peek()
+    {
+        if (items.Count == 0) throw new InvalidOperationException("Queue is empty.");
+        return items.Peek();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        MyQueue<int> queue = new MyQueue<int>();
+        queue.Enqueue(10);
+        queue.Enqueue(20);
+        Console.WriteLine("First: " + queue.Peek());
+        Console.WriteLine("Removed: " + queue.Dequeue());
+        Console.WriteLine("Count: " + queue.Count);
+    }
+}
+
+TZ6
+------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static List<T> FilterByTwoCriteria<T>(IEnumerable<T> items, Predicate<T> first, Predicate<T> second)
+    {
+        List<T> result = new List<T>();
+        foreach (T item in items)
+        {
+            if (first(item) && second(item))
+                result.Add(item);
+        }
+        return result;
+    }
+
+    static void Main()
+    {
+        int[] numbers = { 1, 4, 7, 10, 13, 16, 20 };
+        List<int> numberResult = FilterByTwoCriteria(numbers,
+            x => x > 5,
+            x => x % 2 == 0);
+        Console.WriteLine("Numbers: " + string.Join(" ", numberResult));
+
+        string[] names = { "Anna", "Alex", "Bob", "Andrew", "Kate" };
+        List<string> nameResult = FilterByTwoCriteria(names,
+            x => x.StartsWith("A"),
+            x => x.Length > 3);
+        Console.WriteLine("Names: " + string.Join(" ", nameResult));
+    }
+}
