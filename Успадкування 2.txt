@@ -1,0 +1,208 @@
+﻿БЛОК 8
+Block_08_Money_Devices_Instruments
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Money
+{
+    public int Whole { get; private set; }
+    public int Cents { get; private set; }
+
+    public Money(int whole, int cents)
+    {
+        SetValues(whole, cents);
+    }
+
+    public void SetValues(int whole, int cents)
+    {
+        int totalCents = whole * 100 + cents;
+        Whole = totalCents / 100;
+        Cents = Math.Abs(totalCents % 100);
+    }
+
+    public decimal ToDecimal()
+    {
+        return Whole + Cents / 100m;
+    }
+
+    public void Show()
+    {
+        Console.WriteLine(Whole + "." + Cents.ToString("D2"));
+    }
+}
+
+class Product
+{
+    public string Name { get; set; }
+    public Money Price { get; private set; }
+
+    public Product(string name, Money price)
+    {
+        Name = name;
+        Price = price;
+    }
+
+    public void ReducePrice(decimal amount)
+    {
+        decimal newPrice = Math.Max(0, Price.ToDecimal() - amount);
+        int whole = (int)newPrice;
+        int cents = (int)Math.Round((newPrice - whole) * 100);
+        Price = new Money(whole, cents);
+    }
+
+    public void Show()
+    {
+        Console.Write(Name + ", price: ");
+        Price.Show();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Product product = new Product("Bread", new Money(30, 50));
+        product.Show();
+        product.ReducePrice(5.25m);
+        product.Show();
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Device
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
+
+    public Device(string name, string description)
+    {
+        Name = name;
+        Description = description;
+    }
+
+    public virtual void Sound() { Console.WriteLine("Device sound"); }
+    public void Show() { Console.WriteLine("Name: " + Name); }
+    public void Desc() { Console.WriteLine("Description: " + Description); }
+}
+
+class Kettle : Device
+{
+    public Kettle(string name, string description) : base(name, description) { }
+    public override void Sound() { Console.WriteLine("Whistle"); }
+}
+
+class Microwave : Device
+{
+    public Microwave(string name, string description) : base(name, description) { }
+    public override void Sound() { Console.WriteLine("Beep beep"); }
+}
+
+class Car : Device
+{
+    public Car(string name, string description) : base(name, description) { }
+    public override void Sound() { Console.WriteLine("Brrrr"); }
+}
+
+class Steamboat : Device
+{
+    public Steamboat(string name, string description) : base(name, description) { }
+    public override void Sound() { Console.WriteLine("Toot toot"); }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Device[] devices =
+        {
+            new Kettle("Kettle", "Boils water"),
+            new Microwave("Microwave", "Heats food"),
+            new Car("Car", "Moves on roads"),
+            new Steamboat("Steamboat", "Moves on water")
+        };
+
+        foreach (Device device in devices)
+        {
+            device.Show();
+            device.Desc();
+            device.Sound();
+            Console.WriteLine();
+        }
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class MusicalInstrument
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string HistoryText { get; set; }
+
+    public MusicalInstrument(string name, string description, string history)
+    {
+        Name = name;
+        Description = description;
+        HistoryText = history;
+    }
+
+    public virtual void Sound() { Console.WriteLine("Instrument sound"); }
+    public void Show() { Console.WriteLine("Name: " + Name); }
+    public void Desc() { Console.WriteLine("Description: " + Description); }
+    public void History() { Console.WriteLine("History: " + HistoryText); }
+}
+
+class Violin : MusicalInstrument
+{
+    public Violin(string name, string description, string history) : base(name, description, history) { }
+    public override void Sound() { Console.WriteLine("Violin sound"); }
+}
+
+class Trombone : MusicalInstrument
+{
+    public Trombone(string name, string description, string history) : base(name, description, history) { }
+    public override void Sound() { Console.WriteLine("Trombone sound"); }
+}
+
+class Ukulele : MusicalInstrument
+{
+    public Ukulele(string name, string description, string history) : base(name, description, history) { }
+    public override void Sound() { Console.WriteLine("Ukulele sound"); }
+}
+
+class Cello : MusicalInstrument
+{
+    public Cello(string name, string description, string history) : base(name, description, history) { }
+    public override void Sound() { Console.WriteLine("Cello sound"); }
+}
+
+class Program
+{
+    static void Main()
+    {
+        MusicalInstrument[] instruments =
+        {
+            new Violin("Violin", "String instrument", "It appeared in Europe many centuries ago."),
+            new Trombone("Trombone", "Brass instrument", "It developed from old slide trumpets."),
+            new Ukulele("Ukulele", "Small string instrument", "It became popular in Hawaii."),
+            new Cello("Cello", "Large string instrument", "It appeared in Italy." )
+        };
+
+        foreach (MusicalInstrument instrument in instruments)
+        {
+            instrument.Show();
+            instrument.Desc();
+            instrument.Sound();
+            instrument.History();
+            Console.WriteLine();
+        }
+    }
+}
