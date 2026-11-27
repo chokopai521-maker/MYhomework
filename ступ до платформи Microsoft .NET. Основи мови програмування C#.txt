@@ -1,0 +1,268 @@
+﻿БЛОК 1
+Block_01_Basics
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter number from 1 to 100: ");
+        if (!int.TryParse(Console.ReadLine(), out int number) || number < 1 || number > 100)
+        {
+            Console.WriteLine("Error: number must be from 1 to 100.");
+            return;
+        }
+
+        if (number % 3 == 0 && number % 5 == 0)
+            Console.WriteLine("Fizz Buzz");
+        else if (number % 3 == 0)
+            Console.WriteLine("Fizz");
+        else if (number % 5 == 0)
+            Console.WriteLine("Buzz");
+        else
+            Console.WriteLine(number);
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter number: ");
+        if (!double.TryParse(Console.ReadLine(), out double number))
+        {
+            Console.WriteLine("Wrong number.");
+            return;
+        }
+
+        Console.Write("Enter percent: ");
+        if (!double.TryParse(Console.ReadLine(), out double percent))
+        {
+            Console.WriteLine("Wrong percent.");
+            return;
+        }
+
+        double result = number * percent / 100;
+        Console.WriteLine("Result: " + result);
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        string result = "";
+
+        for (int i = 1; i <= 4; i++)
+        {
+            Console.Write("Enter digit " + i + ": ");
+            if (!int.TryParse(Console.ReadLine(), out int digit) || digit < 0 || digit > 9)
+            {
+                Console.WriteLine("You must enter one digit from 0 to 9.");
+                return;
+            }
+
+            result += digit;
+        }
+
+        Console.WriteLine("Number: " + result);
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter six-digit number: ");
+        string number = Console.ReadLine() ?? "";
+
+        if (number.Length != 6 || !long.TryParse(number, out _))
+        {
+            Console.WriteLine("Error: number must have six digits.");
+            return;
+        }
+
+        Console.Write("Enter first position (1-6): ");
+        if (!int.TryParse(Console.ReadLine(), out int first) || first < 1 || first > 6)
+        {
+            Console.WriteLine("Wrong position.");
+            return;
+        }
+
+        Console.Write("Enter second position (1-6): ");
+        if (!int.TryParse(Console.ReadLine(), out int second) || second < 1 || second > 6)
+        {
+            Console.WriteLine("Wrong position.");
+            return;
+        }
+
+        char[] digits = number.ToCharArray();
+        char temp = digits[first - 1];
+        digits[first - 1] = digits[second - 1];
+        digits[second - 1] = temp;
+
+        Console.WriteLine("New number: " + new string(digits));
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+using System.Globalization;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter date (dd.MM.yyyy): ");
+        if (!DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy", CultureInfo.InvariantCulture,
+            DateTimeStyles.None, out DateTime date))
+        {
+            Console.WriteLine("Wrong date.");
+            return;
+        }
+
+        string season;
+        if (date.Month == 12 || date.Month <= 2)
+            season = "Winter";
+        else if (date.Month <= 5)
+            season = "Spring";
+        else if (date.Month <= 8)
+            season = "Summer";
+        else
+            season = "Autumn";
+
+        Console.WriteLine(season + " " + date.DayOfWeek);
+    }
+}
+
+TZ6
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("1 - Fahrenheit to Celsius");
+        Console.WriteLine("2 - Celsius to Fahrenheit");
+        Console.Write("Choose: ");
+        string choice = Console.ReadLine() ?? "";
+
+        Console.Write("Enter temperature: ");
+        if (!double.TryParse(Console.ReadLine(), out double value))
+        {
+            Console.WriteLine("Wrong temperature.");
+            return;
+        }
+
+        if (choice == "1")
+            Console.WriteLine("Celsius: " + ((value - 32) * 5 / 9));
+        else if (choice == "2")
+            Console.WriteLine("Fahrenheit: " + (value * 9 / 5 + 32));
+        else
+            Console.WriteLine("Wrong choice.");
+    }
+}
+
+TZ7
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter first border: ");
+        if (!int.TryParse(Console.ReadLine(), out int first)) return;
+
+        Console.Write("Enter second border: ");
+        if (!int.TryParse(Console.ReadLine(), out int second)) return;
+
+        if (first > second)
+        {
+            int temp = first;
+            first = second;
+            second = temp;
+        }
+
+        Console.WriteLine("Even numbers:");
+        for (int i = first; i <= second; i++)
+        {
+            if (i % 2 == 0)
+                Console.Write(i + " ");
+        }
+        Console.WriteLine();
+    }
+}
+
+TZ8
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter number: ");
+        if (!int.TryParse(Console.ReadLine(), out int number) || number < 0)
+        {
+            Console.WriteLine("Enter a positive integer.");
+            return;
+        }
+
+        string digits = number.ToString();
+        int power = digits.Length;
+        long sum = 0;
+
+        foreach (char digit in digits)
+            sum += (long)Math.Pow(digit - '0', power);
+
+        if (sum == number)
+            Console.WriteLine("This is an Armstrong number.");
+        else
+            Console.WriteLine("This is not an Armstrong number.");
+    }
+}
+
+TZ9
+------------------------------------------------------------------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter number: ");
+        if (!int.TryParse(Console.ReadLine(), out int number) || number <= 0)
+        {
+            Console.WriteLine("Enter a positive number.");
+            return;
+        }
+
+        int sum = 0;
+        for (int i = 1; i <= number / 2; i++)
+        {
+            if (number % i == 0)
+                sum += i;
+        }
+
+        Console.WriteLine(sum == number ? "Perfect number" : "Not a perfect number");
+    }
+}
