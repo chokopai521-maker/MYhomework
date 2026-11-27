@@ -1,0 +1,422 @@
+﻿БЛОК 7
+Block_07_Inheritance_Exceptions
+==============================================================================
+
+TZ1
+------------------------------------------------------------------------------
+using System;
+
+class Human
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public Human(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+
+    public virtual void Show()
+    {
+        Console.WriteLine("Name: " + Name + ", age: " + Age);
+    }
+}
+
+class Builder : Human
+{
+    public string BuildingType { get; set; }
+    public Builder(string name, int age, string buildingType) : base(name, age)
+    {
+        BuildingType = buildingType;
+    }
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Builder. Builds: " + BuildingType);
+    }
+}
+
+class Sailor : Human
+{
+    public string Ship { get; set; }
+    public Sailor(string name, int age, string ship) : base(name, age)
+    {
+        Ship = ship;
+    }
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Sailor. Ship: " + Ship);
+    }
+}
+
+class Pilot : Human
+{
+    public string Plane { get; set; }
+    public Pilot(string name, int age, string plane) : base(name, age)
+    {
+        Plane = plane;
+    }
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Pilot. Plane: " + Plane);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Human[] people =
+        {
+            new Builder("John", 30, "houses"),
+            new Sailor("Mark", 35, "Sea Star"),
+            new Pilot("Alex", 28, "Boeing")
+        };
+
+        foreach (Human person in people)
+        {
+            person.Show();
+            Console.WriteLine();
+        }
+    }
+}
+
+TZ2
+------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
+class Passport
+{
+    public string FullName { get; set; }
+    public string Country { get; set; }
+    public string PassportNumber { get; set; }
+    public DateTime BirthDate { get; set; }
+
+    public Passport(string fullName, string country, string passportNumber, DateTime birthDate)
+    {
+        FullName = fullName;
+        Country = country;
+        PassportNumber = passportNumber;
+        BirthDate = birthDate;
+    }
+
+    public virtual void Show()
+    {
+        Console.WriteLine("Name: " + FullName);
+        Console.WriteLine("Country: " + Country);
+        Console.WriteLine("Passport number: " + PassportNumber);
+        Console.WriteLine("Birth date: " + BirthDate.ToShortDateString());
+    }
+}
+
+class ForeignPassport : Passport
+{
+    public string ForeignNumber { get; set; }
+    public List<string> Visas { get; set; }
+
+    public ForeignPassport(string fullName, string country, string passportNumber,
+        DateTime birthDate, string foreignNumber) : base(fullName, country, passportNumber, birthDate)
+    {
+        ForeignNumber = foreignNumber;
+        Visas = new List<string>();
+    }
+
+    public void AddVisa(string visa)
+    {
+        Visas.Add(visa);
+    }
+
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Foreign passport: " + ForeignNumber);
+        Console.WriteLine("Visas: " + string.Join(", ", Visas));
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        ForeignPassport passport = new ForeignPassport("Alex Smith", "Ukraine", "AB123456", new DateTime(2000, 5, 10), "UA987654");
+        passport.AddVisa("Poland");
+        passport.AddVisa("Germany");
+        passport.Show();
+    }
+}
+
+TZ3
+------------------------------------------------------------------------------
+using System;
+
+class Animal
+{
+    public string Name { get; set; }
+    public string Color { get; set; }
+    public int Age { get; set; }
+
+    public Animal(string name, string color, int age)
+    {
+        Name = name;
+        Color = color;
+        Age = age;
+    }
+
+    public virtual void Show()
+    {
+        Console.WriteLine(Name + ", color: " + Color + ", age: " + Age);
+    }
+}
+
+class Tiger : Animal
+{
+    public string Habitat { get; set; }
+    public Tiger(string name, string color, int age, string habitat) : base(name, color, age)
+    {
+        Habitat = habitat;
+    }
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Tiger habitat: " + Habitat);
+    }
+}
+
+class Crocodile : Animal
+{
+    public double Length { get; set; }
+    public Crocodile(string name, string color, int age, double length) : base(name, color, age)
+    {
+        Length = length;
+    }
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Crocodile length: " + Length + " m");
+    }
+}
+
+class Kangaroo : Animal
+{
+    public int JumpHeight { get; set; }
+    public Kangaroo(string name, string color, int age, int jumpHeight) : base(name, color, age)
+    {
+        JumpHeight = jumpHeight;
+    }
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine("Jump height: " + JumpHeight + " cm");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Animal[] animals =
+        {
+            new Tiger("Tiger", "orange", 5, "forest"),
+            new Crocodile("Crocodile", "green", 8, 3.5),
+            new Kangaroo("Kangaroo", "brown", 4, 200)
+        };
+
+        foreach (Animal animal in animals)
+        {
+            animal.Show();
+            Console.WriteLine();
+        }
+    }
+}
+
+TZ4
+------------------------------------------------------------------------------
+using System;
+
+abstract class Figure
+{
+    public abstract double Area();
+}
+
+class Rectangle : Figure
+{
+    public double Width { get; set; }
+    public double Height { get; set; }
+    public Rectangle(double width, double height) { Width = width; Height = height; }
+    public override double Area() { return Width * Height; }
+}
+
+class Circle : Figure
+{
+    public double Radius { get; set; }
+    public Circle(double radius) { Radius = radius; }
+    public override double Area() { return Math.PI * Radius * Radius; }
+}
+
+class RightTriangle : Figure
+{
+    public double A { get; set; }
+    public double B { get; set; }
+    public RightTriangle(double a, double b) { A = a; B = b; }
+    public override double Area() { return A * B / 2; }
+}
+
+class Trapezoid : Figure
+{
+    public double A { get; set; }
+    public double B { get; set; }
+    public double Height { get; set; }
+    public Trapezoid(double a, double b, double height) { A = a; B = b; Height = height; }
+    public override double Area() { return (A + B) * Height / 2; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Figure[] figures =
+        {
+            new Rectangle(4, 5),
+            new Circle(3),
+            new RightTriangle(4, 6),
+            new Trapezoid(3, 7, 4)
+        };
+
+        foreach (Figure figure in figures)
+            Console.WriteLine("Area: " + figure.Area());
+    }
+}
+
+TZ5
+------------------------------------------------------------------------------
+using System;
+
+class InvalidAgeException : ArgumentException
+{
+    public InvalidAgeException(string message) : base(message) { }
+}
+
+class Person
+{
+    private int age;
+    public string Name { get; set; }
+
+    public int Age
+    {
+        get { return age; }
+        set
+        {
+            if (value < 0 || value > 120)
+                throw new InvalidAgeException("Age must be from 0 to 120.");
+            age = value;
+        }
+    }
+
+    public Person(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        int[] ages = { 20, -5, 150, 45 };
+        foreach (int age in ages)
+        {
+            try
+            {
+                Person person = new Person("Alex", age);
+                Console.WriteLine(person.Name + ", age: " + person.Age);
+            }
+            catch (InvalidAgeException ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+    }
+}
+
+TZ6
+------------------------------------------------------------------------------
+using System;
+
+class MissingDocumentDataException : Exception
+{
+    public MissingDocumentDataException(string message) : base(message) { }
+}
+
+abstract class Document
+{
+    public abstract void Print();
+}
+
+class Report : Document
+{
+    public string Title { get; set; }
+    public string Text { get; set; }
+
+    public Report(string title, string text) { Title = title; Text = text; }
+
+    public override void Print()
+    {
+        Console.WriteLine("REPORT: " + Title);
+        Console.WriteLine(Text);
+    }
+}
+
+class Invoice : Document
+{
+    public string Number { get; set; }
+    public string Customer { get; set; }
+    public decimal Amount { get; set; }
+
+    public Invoice(string number, string customer, decimal amount)
+    {
+        Number = number;
+        Customer = customer;
+        Amount = amount;
+    }
+
+    public override void Print()
+    {
+        if (string.IsNullOrWhiteSpace(Number) || string.IsNullOrWhiteSpace(Customer) || Amount <= 0)
+            throw new MissingDocumentDataException("Invoice has missing or wrong data.");
+
+        Console.WriteLine("INVOICE " + Number);
+        Console.WriteLine("Customer: " + Customer);
+        Console.WriteLine("Amount: " + Amount);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Document[] documents =
+        {
+            new Report("Monthly report", "All tasks are finished."),
+            new Invoice("INV-01", "Company A", 500),
+            new Invoice("", "", 0)
+        };
+
+        foreach (Document document in documents)
+        {
+            try
+            {
+                document.Print();
+            }
+            catch (MissingDocumentDataException ex)
+            {
+                Console.WriteLine("Document error: " + ex.Message);
+            }
+            Console.WriteLine();
+        }
+    }
+}
